@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../locale/strings.js";
 import type {
   AgentFileEntry,
   AgentsFilesListResult,
@@ -547,11 +548,11 @@ export function renderAgents(props: AgentsProps) {
       <section class="card agents-sidebar">
         <div class="row" style="justify-content: space-between;">
           <div>
-            <div class="card-title">Agents</div>
-            <div class="card-sub">${agents.length} configured.</div>
+            <div class="card-title">${t("agents.title")}</div>
+            <div class="card-sub">${agents.length} ${t("agents.configured")}.</div>
           </div>
           <button class="btn btn--sm" ?disabled=${props.loading} @click=${props.onRefresh}>
-            ${props.loading ? "Loading…" : "Refresh"}
+            ${props.loading ? t("config.loading") : t("agents.refresh")}
           </button>
         </div>
         ${
@@ -563,7 +564,7 @@ export function renderAgents(props: AgentsProps) {
           ${
             agents.length === 0
               ? html`
-                  <div class="muted">No agents found.</div>
+                  <div class="muted">${t("agents.noAgentsFound")}</div>
                 `
               : agents.map((agent) => {
                   const badge = agentBadgeText(agent.id, defaultId);
@@ -593,8 +594,8 @@ export function renderAgents(props: AgentsProps) {
           !selectedAgent
             ? html`
                 <div class="card">
-                  <div class="card-title">Select an agent</div>
-                  <div class="card-sub">Pick an agent to inspect its workspace and tools.</div>
+                  <div class="card-title">${t("agents.selectAgent")}</div>
+                  <div class="card-sub">${t("agents.selectAgentSub")}</div>
                 </div>
               `
             : html`
@@ -749,13 +750,13 @@ function renderAgentHeader(
 }
 
 function renderAgentTabs(active: AgentsPanel, onSelect: (panel: AgentsPanel) => void) {
-  const tabs: Array<{ id: AgentsPanel; label: string }> = [
-    { id: "overview", label: "Overview" },
-    { id: "files", label: "Files" },
-    { id: "tools", label: "Tools" },
-    { id: "skills", label: "Skills" },
-    { id: "channels", label: "Channels" },
-    { id: "cron", label: "Cron Jobs" },
+  const tabs: Array<{ id: AgentsPanel; labelKey: string }> = [
+    { id: "overview", labelKey: "agents.panels.overview" },
+    { id: "files", labelKey: "agents.panels.files" },
+    { id: "tools", labelKey: "agents.panels.tools" },
+    { id: "skills", labelKey: "agents.panels.skills" },
+    { id: "channels", labelKey: "agents.panels.channels" },
+    { id: "cron", labelKey: "agents.panels.cron" },
   ];
   return html`
     <div class="agent-tabs">
@@ -766,7 +767,7 @@ function renderAgentTabs(active: AgentsPanel, onSelect: (panel: AgentsPanel) => 
             type="button"
             @click=${() => onSelect(tab.id)}
           >
-            ${tab.label}
+            ${t(tab.labelKey)}
           </button>
         `,
       )}
@@ -923,7 +924,7 @@ function renderAgentOverview(params: {
             ?disabled=${configSaving || !configDirty}
             @click=${onConfigSave}
           >
-            ${configSaving ? "Saving…" : "Save"}
+            ${configSaving ? t("config.saving") : t("agents.save")}
           </button>
         </div>
       </div>
@@ -1220,9 +1221,9 @@ function renderAgentCron(params: {
         </div>
         <div class="stat-grid" style="margin-top: 16px;">
           <div class="stat">
-            <div class="stat-label">Enabled</div>
+            <div class="stat-label">${t("agents.active")}</div>
             <div class="stat-value">
-              ${params.status ? (params.status.enabled ? "Yes" : "No") : "n/a"}
+              ${params.status ? (params.status.enabled ? t("agents.yes") : t("agents.no")) : t("agents.na")}
             </div>
           </div>
           <div class="stat">
@@ -1363,7 +1364,7 @@ function renderAgentFiles(params: {
                                 ?disabled=${!isDirty}
                                 @click=${() => params.onFileReset(activeEntry.name)}
                               >
-                                Reset
+                                ${t("agents.reset")}
                               </button>
                               <button
                                 class="btn btn--sm primary"
@@ -1613,7 +1614,7 @@ function renderAgentTools(params: {
       </div>
 
       <div class="agent-tools-presets" style="margin-top: 16px;">
-        <div class="label">Quick Presets</div>
+        <div class="label">${t("agents.quickPresets")}</div>
         <div class="agent-tools-buttons">
           ${PROFILE_OPTIONS.map(
             (option) => html`
@@ -1621,8 +1622,9 @@ function renderAgentTools(params: {
                 class="btn btn--sm ${profile === option.id ? "active" : ""}"
                 ?disabled=${!editable}
                 @click=${() => params.onProfileChange(params.agentId, option.id, true)}
+                title=${t(`agents.profiles.${option.id}`)}
               >
-                ${option.label}
+                ${t(`agents.profiles.${option.id}`)}
               </button>
             `,
           )}
@@ -1641,7 +1643,7 @@ function renderAgentTools(params: {
           (section) =>
             html`
             <div class="agent-tools-section">
-              <div class="agent-tools-header">${section.label}</div>
+              <div class="agent-tools-header">${t(`agents.toolSections.${section.id}`)}</div>
               <div class="agent-tools-list">
                 ${section.tools.map((tool) => {
                   const { allowed } = resolveAllowed(tool.id);
@@ -1649,7 +1651,7 @@ function renderAgentTools(params: {
                     <div class="agent-tool-row">
                       <div>
                         <div class="agent-tool-title mono">${tool.label}</div>
-                        <div class="agent-tool-sub">${tool.description}</div>
+                        <div class="agent-tool-sub">${t(`agents.toolDescriptions.${tool.id}`) || tool.description}</div>
                       </div>
                       <label class="cfg-toggle">
                         <input
@@ -1762,7 +1764,7 @@ function renderAgentSkills(params: {
         </div>
         <div class="row" style="gap: 8px;">
           <button class="btn btn--sm" ?disabled=${!editable} @click=${() => params.onClear(params.agentId)}>
-            Use All
+            ${t("agents.useAll")}
           </button>
           <button class="btn btn--sm" ?disabled=${!editable} @click=${() => params.onDisableAll(params.agentId)}>
             Disable All

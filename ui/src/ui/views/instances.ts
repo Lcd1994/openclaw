@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../locale/strings.js";
 import type { PresenceEntry } from "../types.ts";
 import { formatPresenceAge, formatPresenceSummary } from "../presenter.ts";
 
@@ -15,11 +16,11 @@ export function renderInstances(props: InstancesProps) {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Connected Instances</div>
-          <div class="card-sub">Presence beacons from the gateway and clients.</div>
+          <div class="card-title">${t("instances.title")}</div>
+          <div class="card-sub">${t("instances.sub")}</div>
         </div>
         <button class="btn" ?disabled=${props.loading} @click=${props.onRefresh}>
-          ${props.loading ? "Loading…" : "Refresh"}
+          ${props.loading ? t("instances.loading") : t("instances.refresh")}
         </button>
       </div>
       ${
@@ -40,7 +41,7 @@ export function renderInstances(props: InstancesProps) {
         ${
           props.entries.length === 0
             ? html`
-                <div class="muted">No instances reported yet.</div>
+                <div class="muted">${t("instances.notFound")}</div>
               `
             : props.entries.map((entry) => renderEntry(entry))
         }

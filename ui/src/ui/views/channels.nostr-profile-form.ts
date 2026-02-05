@@ -5,6 +5,7 @@
  */
 
 import { html, nothing, type TemplateResult } from "lit";
+import { t } from "../locale/strings.js";
 import type { NostrProfile as NostrProfileType } from "../types.ts";
 
 // ============================================================================
@@ -190,20 +191,20 @@ export function renderNostrProfileForm(params: {
         help: "Short username (e.g., satoshi)",
       })}
 
-      ${renderField("displayName", "Display Name", {
+      ${renderField("displayName", t("channels.profileForm.displayName"), {
         placeholder: "Satoshi Nakamoto",
         maxLength: 256,
         help: "Your full display name",
       })}
 
-      ${renderField("about", "Bio", {
+      ${renderField("about", t("channels.profileForm.bio"), {
         type: "textarea",
         placeholder: "Tell people about yourself...",
         maxLength: 2000,
         help: "A brief bio or description",
       })}
 
-      ${renderField("picture", "Avatar URL", {
+      ${renderField("picture", t("channels.profileForm.avatarUrl"), {
         type: "url",
         placeholder: "https://example.com/avatar.jpg",
         help: "HTTPS URL to your profile picture",
@@ -247,7 +248,7 @@ export function renderNostrProfileForm(params: {
           @click=${callbacks.onSave}
           ?disabled=${state.saving || !isDirty}
         >
-          ${state.saving ? "Saving..." : "Save & Publish"}
+          ${state.saving ? t("channels.profileForm.saving") : t("channels.profileForm.saveAndPublish")}
         </button>
 
         <button
@@ -255,14 +256,14 @@ export function renderNostrProfileForm(params: {
           @click=${callbacks.onImport}
           ?disabled=${state.importing || state.saving}
         >
-          ${state.importing ? "Importing..." : "Import from Relays"}
+          ${state.importing ? t("channels.profileForm.importing") : t("channels.profileForm.importFromRelays")}
         </button>
 
         <button
           class="btn"
           @click=${callbacks.onToggleAdvanced}
         >
-          ${state.showAdvanced ? "Hide Advanced" : "Show Advanced"}
+          ${state.showAdvanced ? t("channels.profileForm.hideAdvanced") : t("channels.profileForm.showAdvanced")}
         </button>
 
         <button
@@ -270,7 +271,7 @@ export function renderNostrProfileForm(params: {
           @click=${callbacks.onCancel}
           ?disabled=${state.saving}
         >
-          Cancel
+          ${t("channels.profileForm.cancel")}
         </button>
       </div>
 

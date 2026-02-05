@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../locale/strings.js";
 import type {
   ChannelAccountSnapshot,
   ChannelUiMetaEntry,
@@ -83,7 +84,7 @@ export function renderChannels(props: ChannelsProps) {
           : nothing
       }
       <pre class="code-block" style="margin-top: 12px;">
-${props.snapshot ? JSON.stringify(props.snapshot, null, 2) : "No snapshot yet."}
+${props.snapshot ? JSON.stringify(props.snapshot, null, 2) : t("channels.noSnapshot")}
       </pre>
     </section>
   `;

@@ -1,6 +1,7 @@
 const KEY = "openclaw.control.settings.v1";
 
 import type { ThemeMode } from "./theme.ts";
+import type { Locale } from "./locale/strings.js";
 
 export type UiSettings = {
   gatewayUrl: string;
@@ -8,6 +9,7 @@ export type UiSettings = {
   sessionKey: string;
   lastActiveSessionKey: string;
   theme: ThemeMode;
+  locale: Locale;
   chatFocusMode: boolean;
   chatShowThinking: boolean;
   splitRatio: number; // Sidebar split ratio (0.4 to 0.7, default 0.6)
@@ -21,12 +23,15 @@ export function loadSettings(): UiSettings {
     return `${proto}://${location.host}`;
   })();
 
+  const defaultLocale: Locale =
+    typeof navigator !== "undefined" && /^zh/i.test(navigator.language) ? "zh-CN" : "en";
   const defaults: UiSettings = {
     gatewayUrl: defaultUrl,
     token: "",
     sessionKey: "main",
     lastActiveSessionKey: "main",
     theme: "system",
+    locale: defaultLocale,
     chatFocusMode: false,
     chatShowThinking: true,
     splitRatio: 0.6,
@@ -59,6 +64,8 @@ export function loadSettings(): UiSettings {
         parsed.theme === "light" || parsed.theme === "dark" || parsed.theme === "system"
           ? parsed.theme
           : defaults.theme,
+      locale:
+        parsed.locale === "zh-CN" || parsed.locale === "en" ? parsed.locale : defaults.locale,
       chatFocusMode:
         typeof parsed.chatFocusMode === "boolean" ? parsed.chatFocusMode : defaults.chatFocusMode,
       chatShowThinking:
@@ -73,14 +80,36 @@ export function loadSettings(): UiSettings {
           : defaults.splitRatio,
       navCollapsed:
         typeof parsed.navCollapsed === "boolean" ? parsed.navCollapsed : defaults.navCollapsed,
-      navGroupsCollapsed:
+      navGroupsCollapsed: migrateNavGroupsCollapsed(
         typeof parsed.navGroupsCollapsed === "object" && parsed.navGroupsCollapsed !== null
           ? parsed.navGroupsCollapsed
           : defaults.navGroupsCollapsed,
+      ),
     };
   } catch {
     return defaults;
   }
+}
+
+/** Migrate legacy label keys (Chat, Control, etc.) to stable ids (chat, control, etc.). */
+function migrateNavGroupsCollapsed(
+  raw: Record<string, boolean>,
+): Record<string, boolean> {
+  const labelToId: Record<string, string> = {
+    Chat: "chat",
+    Control: "control",
+    Agent: "agent",
+    Settings: "settings",
+    Resources: "resources",
+  };
+  const result: Record<string, boolean> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    const id = labelToId[k] ?? k;
+    if (!(id in result)) {
+      result[id] = v;
+    }
+  }
+  return result;
 }
 
 export function saveSettings(next: UiSettings) {

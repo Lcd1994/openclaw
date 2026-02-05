@@ -281,6 +281,44 @@
 }
 
 /* ===========================================
+   Locale Toggle
+   =========================================== */
+
+.locale-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--secondary);
+}
+
+.locale-toggle__button {
+  height: 28px;
+  min-width: 36px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--duration-fast) ease, background var(--duration-fast) ease;
+}
+
+.locale-toggle__button:hover {
+  color: var(--text);
+}
+
+.locale-toggle__button.active {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ===========================================
    Status Dot - With glow for emphasis
    =========================================== */
 

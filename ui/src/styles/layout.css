@@ -179,6 +179,12 @@
   height: 6px;
 }
 
+.topbar-status .locale-toggle__button {
+  height: 24px;
+  min-width: 32px;
+  font-size: 11px;
+}
+
 .topbar-status .theme-toggle {
   --theme-item: 24px;
   --theme-gap: 2px;

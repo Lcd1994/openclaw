@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { t } from "../locale/strings.js";
 import type { WhatsAppStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
 import { formatAgo } from "../format.ts";
@@ -20,37 +21,37 @@ export function renderWhatsAppCard(params: {
 
       <div class="status-list" style="margin-top: 16px;">
         <div>
-          <span class="label">Configured</span>
-          <span>${whatsapp?.configured ? "Yes" : "No"}</span>
+          <span class="label">${t("channels.configured")}</span>
+          <span>${whatsapp?.configured ? t("agents.yes") : t("agents.no")}</span>
         </div>
         <div>
-          <span class="label">Linked</span>
-          <span>${whatsapp?.linked ? "Yes" : "No"}</span>
+          <span class="label">${t("channels.linked")}</span>
+          <span>${whatsapp?.linked ? t("agents.yes") : t("agents.no")}</span>
         </div>
         <div>
-          <span class="label">Running</span>
-          <span>${whatsapp?.running ? "Yes" : "No"}</span>
+          <span class="label">${t("channels.running")}</span>
+          <span>${whatsapp?.running ? t("agents.yes") : t("agents.no")}</span>
         </div>
         <div>
-          <span class="label">Connected</span>
-          <span>${whatsapp?.connected ? "Yes" : "No"}</span>
+          <span class="label">${t("channels.connected")}</span>
+          <span>${whatsapp?.connected ? t("agents.yes") : t("agents.no")}</span>
         </div>
         <div>
-          <span class="label">Last connect</span>
+          <span class="label">${t("channels.lastConnect")}</span>
           <span>
-            ${whatsapp?.lastConnectedAt ? formatAgo(whatsapp.lastConnectedAt) : "n/a"}
+            ${whatsapp?.lastConnectedAt ? formatAgo(whatsapp.lastConnectedAt) : t("agents.na")}
           </span>
         </div>
         <div>
-          <span class="label">Last message</span>
+          <span class="label">${t("channels.lastMessage")}</span>
           <span>
-            ${whatsapp?.lastMessageAt ? formatAgo(whatsapp.lastMessageAt) : "n/a"}
+            ${whatsapp?.lastMessageAt ? formatAgo(whatsapp.lastMessageAt) : t("agents.na")}
           </span>
         </div>
         <div>
-          <span class="label">Auth age</span>
+          <span class="label">${t("channels.authAge")}</span>
           <span>
-            ${whatsapp?.authAgeMs != null ? formatDuration(whatsapp.authAgeMs) : "n/a"}
+            ${whatsapp?.authAgeMs != null ? formatDuration(whatsapp.authAgeMs) : t("agents.na")}
           </span>
         </div>
       </div>
@@ -85,31 +86,31 @@ export function renderWhatsAppCard(params: {
           ?disabled=${props.whatsappBusy}
           @click=${() => props.onWhatsAppStart(false)}
         >
-          ${props.whatsappBusy ? "Working…" : "Show QR"}
+          ${props.whatsappBusy ? t("channels.working") : t("channels.showQr")}
         </button>
         <button
           class="btn"
           ?disabled=${props.whatsappBusy}
           @click=${() => props.onWhatsAppStart(true)}
         >
-          Relink
+          ${t("channels.relink")}
         </button>
         <button
           class="btn"
           ?disabled=${props.whatsappBusy}
           @click=${() => props.onWhatsAppWait()}
         >
-          Wait for scan
+          ${t("channels.waitForScan")}
         </button>
         <button
           class="btn danger"
           ?disabled=${props.whatsappBusy}
           @click=${() => props.onWhatsAppLogout()}
         >
-          Logout
+          ${t("channels.logout")}
         </button>
         <button class="btn" @click=${() => props.onRefresh(true)}>
-          Refresh
+          ${t("channels.refresh")}
         </button>
       </div>
 

@@ -1,5 +1,6 @@
 import { html, nothing } from "lit";
 import type { ConfigUiHints } from "../types.ts";
+import { t } from "../locale/strings.js";
 import { hintForPath, humanize, schemaType, type JsonSchema } from "./config-form.shared.ts";
 import { analyzeConfigSchema, renderConfigForm, SECTION_META } from "./config-form.ts";
 
@@ -262,20 +263,20 @@ const sidebarIcons = {
   `,
 };
 
-// Section definitions
-const SECTIONS: Array<{ key: string; label: string }> = [
-  { key: "env", label: "Environment" },
-  { key: "update", label: "Updates" },
-  { key: "agents", label: "Agents" },
-  { key: "auth", label: "Authentication" },
-  { key: "channels", label: "Channels" },
-  { key: "messages", label: "Messages" },
-  { key: "commands", label: "Commands" },
-  { key: "hooks", label: "Hooks" },
-  { key: "skills", label: "Skills" },
-  { key: "tools", label: "Tools" },
-  { key: "gateway", label: "Gateway" },
-  { key: "wizard", label: "Setup Wizard" },
+// Section definitions - labels will be translated in render
+const SECTIONS: Array<{ key: string; labelKey: string }> = [
+  { key: "env", labelKey: "config.sections.env" },
+  { key: "update", labelKey: "config.sections.update" },
+  { key: "agents", labelKey: "config.sections.agents" },
+  { key: "auth", labelKey: "config.sections.auth" },
+  { key: "channels", labelKey: "config.sections.channels" },
+  { key: "messages", labelKey: "config.sections.messages" },
+  { key: "commands", labelKey: "config.sections.commands" },
+  { key: "hooks", labelKey: "config.sections.hooks" },
+  { key: "skills", labelKey: "config.sections.skills" },
+  { key: "tools", labelKey: "config.sections.tools" },
+  { key: "gateway", labelKey: "config.sections.gateway" },
+  { key: "wizard", labelKey: "config.sections.wizard" },
 ];
 
 type SubsectionEntry = {
@@ -396,7 +397,7 @@ export function renderConfig(props: ConfigProps) {
   const knownKeys = new Set(SECTIONS.map((s) => s.key));
   const extraSections = Object.keys(schemaProps)
     .filter((k) => !knownKeys.has(k))
-    .map((k) => ({ key: k, label: k.charAt(0).toUpperCase() + k.slice(1) }));
+    .map((k) => ({ key: k, labelKey: null as string | null, label: k.charAt(0).toUpperCase() + k.slice(1) }));
 
   const allSections = [...availableSections, ...extraSections];
 
@@ -498,7 +499,7 @@ export function renderConfig(props: ConfigProps) {
             @click=${() => props.onSectionChange(null)}
           >
             <span class="config-nav__icon">${sidebarIcons.all}</span>
-            <span class="config-nav__label">All Settings</span>
+            <span class="config-nav__label">${t("config.allSettings")}</span>
           </button>
           ${allSections.map(
             (section) => html`
@@ -509,7 +510,7 @@ export function renderConfig(props: ConfigProps) {
                 <span class="config-nav__icon"
                   >${getSectionIcon(section.key)}</span
                 >
-                <span class="config-nav__label">${section.label}</span>
+                <span class="config-nav__label">${section.labelKey ? t(section.labelKey) : section.label}</span>
               </button>
             `,
           )}
@@ -523,13 +524,13 @@ export function renderConfig(props: ConfigProps) {
               ?disabled=${props.schemaLoading || !props.schema}
               @click=${() => props.onFormModeChange("form")}
             >
-              Form
+              ${t("config.formMode")}
             </button>
             <button
               class="config-mode-toggle__btn ${props.formMode === "raw" ? "active" : ""}"
               @click=${() => props.onFormModeChange("raw")}
             >
-              Raw
+              ${t("config.rawMode")}
             </button>
           </div>
         </div>
@@ -546,13 +547,13 @@ export function renderConfig(props: ConfigProps) {
                   <span class="config-changes-badge"
                     >${
                       props.formMode === "raw"
-                        ? "Unsaved changes"
-                        : `${diff.length} unsaved change${diff.length !== 1 ? "s" : ""}`
+                        ? t("config.unsavedChanges")
+                        : `${diff.length} ${t("config.unsavedChangesCount")}`
                     }</span
                   >
                 `
                 : html`
-                    <span class="config-status muted">No changes</span>
+                    <span class="config-status muted">${t("config.noChanges")}</span>
                   `
             }
           </div>
@@ -562,14 +563,14 @@ export function renderConfig(props: ConfigProps) {
               ?disabled=${props.loading}
               @click=${props.onReload}
             >
-              ${props.loading ? "Loading…" : "Reload"}
+              ${props.loading ? t("config.loading") : t("config.reload")}
             </button>
             <button
               class="btn btn--sm primary"
               ?disabled=${!canSave}
               @click=${props.onSave}
             >
-              ${props.saving ? "Saving…" : "Save"}
+              ${props.saving ? t("config.loading") : t("config.save")}
             </button>
             <button
               class="btn btn--sm"
@@ -595,8 +596,7 @@ export function renderConfig(props: ConfigProps) {
               <details class="config-diff">
                 <summary class="config-diff__summary">
                   <span
-                    >View ${diff.length} pending
-                    change${diff.length !== 1 ? "s" : ""}</span
+                    >${t("config.viewPendingChanges")} ${diff.length} ${diff.length !== 1 ? t("config.pendingChangesPlural") : t("config.pendingChanges")}</span
                   >
                   <svg
                     class="config-diff__chevron"
@@ -661,7 +661,7 @@ export function renderConfig(props: ConfigProps) {
                   class="config-subnav__item ${effectiveSubsection === null ? "active" : ""}"
                   @click=${() => props.onSubsectionChange(ALL_SUBSECTION)}
                 >
-                  All
+                  ${t("config.allSubsection")}
                 </button>
                 ${subsections.map(
                   (entry) => html`
@@ -691,7 +691,7 @@ export function renderConfig(props: ConfigProps) {
                     ? html`
                         <div class="config-loading">
                           <div class="config-loading__spinner"></div>
-                          <span>Loading schema…</span>
+                          <span>${t("config.loadingSchema")}</span>
                         </div>
                       `
                     : renderConfigForm({
@@ -710,7 +710,7 @@ export function renderConfig(props: ConfigProps) {
                   formUnsafe
                     ? html`
                         <div class="callout danger" style="margin-top: 12px">
-                          Form view can't safely edit some fields. Use Raw to avoid losing config entries.
+                          ${t("config.formViewWarning")}
                         </div>
                       `
                     : nothing
@@ -718,7 +718,7 @@ export function renderConfig(props: ConfigProps) {
               `
               : html`
                 <label class="field config-raw-field">
-                  <span>Raw JSON5</span>
+                  <span>${t("config.rawJson5")}</span>
                   <textarea
                     .value=${props.raw}
                     @input=${(e: Event) =>
